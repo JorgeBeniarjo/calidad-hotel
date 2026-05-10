@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Control Calidad Hotel</title>
+
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#2a73cc" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <img
+        src="icons/logo.png"
+        alt="Logo"
+        class="logo"
+        onerror="
+          this.src =
+            'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTcgMTRjMS42NiAwIDMtMS.zNCAzLTNTOC42NiA4IDcgOFM0IDkuMzQgNCAxMXMxLjM0IDMgMyAzem0xNC0yYy0xLjY2IDAtMyAxLjM0LTMgM3MxLjM0IDMgMyAzIDMtMS4zNCAzLTNTMjIuNjYgMTIgMjEgMTJ6bS03LTZjMS42NiAwIDMtMS4zNCAzLTNTMTUuNjYgNCAxNCA0cy0zIDEuMzQtMyAzIDEuMzQgMyAzIDN6bS00IDloMmMwIDEuMTEuODkgMiAyIDJoMnYtMmMwLTEuMTEtLjg5LTItMi0ySDljLTEuMTEgMC0yIC44OS0yIDJ2Mmgtdi0yem0tNS01djJjMCAxLjExLjg5IDIgMiAyaDJ2LTJIOEw4IDhINmMyIDAgMiA4Ljg5IDIgMnpNMyA0aDJMNCAySDJ2MmMxLjExIDAgMi0uODkgMi0yem01IDRWMmgydjZINXoiLz48L3N2Zz4='
+        "
+      />
+      <h1>Control de Calidad</h1>
+    </header>
+
+    <div
+      id="connection-status"
+      class="connection-status"
+      style="display: none"
+    ></div>
+
+    <main class="container">
+      <div style="text-align: center; margin-bottom: 2rem">
+        <h2>Bienvenido</h2>
+        <p style="color: var(--text-light); margin-top: 10px">
+          Sistema de gestión de calidad y revisiones del hotel.
+        </p>
+      </div>
+
+      <div class="card-grid">
+        <a href="nueva-revision.html" class="card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+            />
+          </svg>
+          <h3>Nueva Revisión</h3>
+          <p>Capturar datos del estado de una habitación</p>
+        </a>
+
+        <a href="revisiones.html" class="card">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path
+              d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+            />
+          </svg>
+          <h3>Ver Revisiones</h3>
+          <p>Listado del histórico de las revisiones de calidad</p>
+        </a>
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="index.html" class="active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </svg>
+        Inicio
+      </a>
+      <a href="nueva-revision.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+          />
+        </svg>
+        Nueva
+      </a>
+      <a href="revisiones.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+          />
+        </svg>
+        Historial
+      </a>
+    </nav>
+
+    <script src="./js/app.js"></script>
+  </body>
+</html>

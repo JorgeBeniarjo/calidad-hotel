@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Revisiones - Control Calidad</title>
+
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#2a73cc" />
+
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <img
+        src="icons/logo.png"
+        alt="Logo"
+        class="logo"
+        onerror="
+          this.src =
+            'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTcgMTRjMS42NiAwIDMtMS.zNCAzLTNTOC42NiA4IDcgOFM0IDkuMzQgNCAxMXMxLjM0IDMgMyAzem0xNC0yYy0xLjY2IDAtMyAxLjM0LTMgM3MxLjM0IDMgMyAzIDMtMS4zNCAzLTNTMjIuNjYgMTIgMjEgMTJ6bS03LTZjMS42NiAwIDMtMS4zNCAzLTNTMTUuNjYgNCAxNCA0cy0zIDEuMzQtMyAzIDEuMzQgMyAzIDN6bS00IDloMmMwIDEuMTEuODkgMiAyIDJoMnYtMmMwLTEuMTEtLjg5LTItMi0ySDljLTEuMTEgMC0yIC44OS0yIDJ2Mmgtdi0yem0tNS01djJjMCAxLjExLjg5IDIgMiAyaDJ2LTJIOEw4IDhINmMyIDAgMiA4Ljg5IDIgMnpNMyA0aDJMNCAySDJ2MmMxLjExIDAgMi0uODkgMi0yem01IDRWMmgydjZINXoiLz48L3N2Zz4='
+        "
+      />
+      <h1>Revisiones Anteriores</h1>
+    </header>
+
+    <div
+      id="connection-status"
+      class="connection-status"
+      style="display: none"
+    ></div>
+
+    <div class="loader-overlay" id="loader" style="display: flex">
+      <div class="spinner"></div>
+      <p style="margin-top: 15px; font-weight: 600">Cargando revisiones...</p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal Detalle Revisión -->
+    <div id="review-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modal-title" style="font-size: 1.2rem; margin: 0">
+            Detalle Revisión
+          </h2>
+          <button
+            id="modal-close"
+            class="btn-close"
+            onclick="
+              document.getElementById('review-modal').style.display = 'none'
+            "
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" id="modal-body-content">
+          <!-- Data rendered dynamically via JS -->
+        </div>
+        <div class="modal-footer" id="modal-footer-actions">
+          <!-- Buttons rendered dynamically via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Visor de Fotos -->
+    <div
+      id="photo-viewer-modal"
+      class="modal-overlay"
+      style="display: none; z-index: 3000"
+    >
+      <div class="photo-viewer-content">
+        <button
+          class="btn-close photo-btn"
+          onclick="
+            document.getElementById('photo-viewer-modal').style.display = 'none'
+          "
+        >
+          ✕
+        </button>
+        <img id="photo-viewer-img" src="" alt="Foto completa" />
+      </div>
+    </div>
+
+    <main class="container">
+      <div class="filters">
+        <input type="date" class="form-control" title="Filtrar por fecha" />
+        <select class="form-control" title="Filtrar por estado">
+          <option value="">Todos los Estados</option>
+          <option value="ABIERTA">ABIERTAS</option>
+          <option value="RESUELTA">RESUELTAS</option>
+        </select>
+        <select class="form-control" title="Puntuación mínima">
+          <option value="0">Toda Puntuación</option>
+          <option value="1">- de 5</option>
+          <option value="5">- de 7</option>
+        </select>
+      </div>
+
+      <div id="review-list" class="review-list">
+        <!-- Se rellenará via JS -->
+      </div>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </svg>
+        Inicio
+      </a>
+      <a href="nueva-revision.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+          />
+        </svg>
+        Nueva
+      </a>
+      <a href="revisiones.html" class="active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+          />
+        </svg>
+        Historial
+      </a>
+    </nav>
+
+    <script src="./js/sheets.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Nueva Revisión - Control Calidad</title>
+
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#2a73cc" />
+
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <img
+        src="icons/logo.png"
+        alt="Logo"
+        class="logo"
+        onerror="
+          this.src =
+            'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI+PHBhdGggZD0iTTcgMTRjMS42NiAwIDMtMS.zNCAzLTNTOC42NiA4IDcgOFM0IDkuMzQgNCAxMXMxLjM0IDMgMyAzem0xNC0yYy0xLjY2IDAtMyAxLjM0LTMgM3MxLjM0IDMgMyAzIDMtMS4zNCAzLTNTMjIuNjYgMTIgMjEgMTJ6bS03LTZjMS42NiAwIDMtMS4zNCAzLTNTMTUuNjYgNCAxNCA0cy0zIDEuMzQtMyAzIDEuMzQgMyAzIDN6bS00IDloMmMwIDEuMTEuODkgMiAyIDJoMnYtMmMwLTEuMTEtLjg5LTItMi0ySDljLTEuMTEgMC0yIC44OS0yIDJ2Mmgtdi0yem0tNS01djJjMCAxLjExLjg5IDIgMiAyaDJ2LTJIOEw4IDhINmMyIDAgMiA4Ljg5IDIgMnpNMyA0aDJMNCAySDJ2MmMxLjExIDAgMi0uODkgMi0yem01IDRWMmgydjZINXoiLz48L3N2Zz4='
+        "
+      />
+      <h1>Nueva Revisión</h1>
+    </header>
+
+    <div
+      id="connection-status"
+      class="connection-status"
+      style="display: none"
+    ></div>
+
+    <!-- Loader spinner overlay -->
+    <div class="loader-overlay" id="loader" style="display: none">
+      <div class="spinner"></div>
+      <p style="margin-top: 15px; font-weight: 600">Cargando...</p>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <main class="container">
+      <form id="form-nueva-revision">
+        <div class="form-group">
+          <label for="fecha">FECHA</label>
+          <input type="date" id="fecha" class="form-control" required />
+        </div>
+
+        <div class="form-group">
+          <label>DEPARTAMENTO</label>
+          <input type="hidden" id="departamento_val" value="PISOS" />
+          <div class="toggle-group" data-target="departamento_val">
+            <button type="button" class="toggle-btn active" data-value="PISOS">
+              PISOS
+            </button>
+            <button type="button" class="toggle-btn" data-value="MANTENIMIENTO">
+              MANTTO
+            </button>
+            <button type="button" class="toggle-btn" data-value="RESTAURANTE">
+              REST
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_habitacion">ID HABITACIÓN</label>
+          <select id="id_habitacion" class="form-control" required>
+            <option value="">-- Seleccionar --</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="display: flex; gap: 10px">
+          <div style="flex: 1">
+            <label for="planta">PLANTA</label>
+            <input type="text" id="planta" class="form-control" readonly />
+          </div>
+          <div style="flex: 1">
+            <label for="tipologia">TIPOLOGÍA</label>
+            <input type="text" id="tipologia" class="form-control" readonly />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_personal_trabajo">CAMARERA</label>
+          <select id="id_personal_trabajo" class="form-control" required>
+            <option value="">-- Seleccionar --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="id_supervisor">SUPERVISOR</label>
+          <select id="id_supervisor" class="form-control" required>
+            <option value="">-- Seleccionar --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>PUNTUACIÓN</label>
+          <div class="slider-container">
+            <div id="score-display" class="score-display">10</div>
+            <input
+              type="range"
+              id="puntuacion"
+              min="1"
+              max="10"
+              value="10"
+              step="1"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="observaciones">OBSERVACIONES</label>
+          <textarea
+            id="observaciones"
+            class="form-control"
+            placeholder="Añadir comentarios..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>FOTOS</label>
+          <div class="photo-uploader">
+            <input
+              type="file"
+              id="camera-input"
+              accept="image/*"
+              capture="environment"
+              style="display: none"
+              multiple
+            />
+            <button
+              type="button"
+              class="btn-camera"
+              onclick="document.getElementById('camera-input').click()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M4 4h3l2-2h6l2 2h3c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 3c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"
+                />
+              </svg>
+              Añadir foto
+            </button>
+            <div id="photos-grid-container" class="photos-grid"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="accion_tomada">ACCIÓN TOMADA</label>
+          <textarea
+            id="accion_tomada"
+            class="form-control"
+            placeholder="Acciones realizadas..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>¿REQUIRIÓ REPASO?</label>
+          <input type="hidden" id="requirio_repaso_val" value="NO" />
+          <div class="toggle-group" data-target="requirio_repaso_val">
+            <button type="button" class="toggle-btn" data-value="SI">SÍ</button>
+            <button type="button" class="toggle-btn active" data-value="NO">
+              NO
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ESTADO</label>
+          <input type="hidden" id="estado_val" value="ABIERTA" />
+          <div class="toggle-group" data-target="estado_val">
+            <button
+              type="button"
+              class="toggle-btn active"
+              data-value="ABIERTA"
+            >
+              ABIERTA
+            </button>
+            <button type="button" class="toggle-btn" data-value="RESUELTA">
+              RESUELTA
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="btn-guardar"
+          class="btn btn-primary"
+          style="margin-top: 1rem; font-size: 1.1rem; padding: 1.2rem"
+        >
+          GUARDAR REVISIÓN
+        </button>
+        <br /><br /><br />
+      </form>
+    </main>
+
+    <nav class="bottom-nav">
+      <a href="index.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+        </svg>
+        Inicio
+      </a>
+      <a href="nueva-revision.html" class="active">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"
+          />
+        </svg>
+        Nueva
+      </a>
+      <a href="revisiones.html">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path
+            d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"
+          />
+        </svg>
+        Historial
+      </a>
+    </nav>
+
+    <script src="./js/sheets.js"></script>
+    <script src="./js/camera.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
