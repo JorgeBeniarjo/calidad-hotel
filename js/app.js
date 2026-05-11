@@ -64,7 +64,11 @@ const appLogic = {
       // Establecer fecha por defecto (hoy)
       const inputFecha = document.getElementById('fecha');
       if (inputFecha) {
-        inputFecha.valueAsDate = new Date();
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputFecha.value = `${yyyy}-${mm}-${dd}`;
       }
 
       // Cargar selectores
