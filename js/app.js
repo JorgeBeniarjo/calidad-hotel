@@ -1,25 +1,25 @@
- Registra el Service Worker
- if ('serviceWorker' in navigator) {
+// Registra el Service Worker
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js')
       .then((reg) => console.log('Service Worker registrado', reg.scope))
       .catch((err) => console.log('Error al registrar Service Worker', err));
   });
- }
+}
 
 const appLogic = {
   revisionesCache: [],
   camarerasCache: [],
   supervisoresCache: [],
 
-  initGlobal: function() {
+  initGlobal: function () {
     this.monitorizarConexion();
   },
 
-// ... skipping to initListaRevisiones below ...
+  // ... skipping to initListaRevisiones below ...
 
 
-  monitorizarConexion: function() {
+  monitorizarConexion: function () {
     const updateOfflineStatus = () => {
       const statusDiv = document.getElementById('connection-status');
       if (!statusDiv) return;
@@ -40,25 +40,25 @@ const appLogic = {
     updateOfflineStatus();
   },
 
-  mostrarLoader: function(mostrar) {
+  mostrarLoader: function (mostrar) {
     const loader = document.getElementById('loader');
     if (loader) loader.style.display = mostrar ? 'flex' : 'none';
   },
 
-  mostrarToast: function(mensaje, tipo = 'success') {
+  mostrarToast: function (mensaje, tipo = 'success') {
     const toast = document.getElementById('toast');
     if (!toast) return;
 
     toast.textContent = mensaje;
     toast.className = `toast toast-${tipo} show`;
-    
+
     setTimeout(() => {
       toast.className = 'toast';
     }, 3000);
   },
 
   // Lógica específica para la vista "Nueva Revisión"
-  initFormNuevaRevision: async function() {
+  initFormNuevaRevision: async function () {
     this.mostrarLoader(true);
     try {
       // Establecer fecha por defecto (hoy)
@@ -70,13 +70,13 @@ const appLogic = {
       // Cargar selectores
       const habitaciones = await sheetsAPI.cargarHabitaciones();
       this.habitacionesCache = habitaciones;
-      
+
       const selectHabitacion = document.getElementById('id_habitacion');
       if (selectHabitacion) {
         habitaciones.forEach(hab => {
           selectHabitacion.add(new Option(`Hab. ${hab.ID_HABITACION} — Planta ${hab.PLANTA} — ${hab.TIPOLOGIA}`, hab.ID_HABITACION));
         });
-        
+
         // Listener para autocompletar Planta y Tipología
         selectHabitacion.addEventListener('change', (e) => {
           const selected = this.habitacionesCache.find(h => h.ID_HABITACION.toString() === e.target.value);
@@ -105,7 +105,7 @@ const appLogic = {
       // Inicializar lógica UI del formulario (slider de puntuación)
       const inputPuntuacion = document.getElementById('puntuacion');
       const displayScore = document.getElementById('score-display');
-      
+
       if (inputPuntuacion && displayScore) {
         const updateScoreColor = (val) => {
           displayScore.textContent = val;
@@ -113,7 +113,7 @@ const appLogic = {
           else if (val <= 6) displayScore.style.color = 'var(--warning-color)';
           else displayScore.style.color = 'var(--success-color)';
         };
-        
+
         inputPuntuacion.addEventListener('input', (e) => updateScoreColor(e.target.value));
         updateScoreColor(inputPuntuacion.value); // Set initial
       }
@@ -131,12 +131,12 @@ const appLogic = {
     }
   },
 
-  setupToggles: function() {
+  setupToggles: function () {
     // Busca agrupaciones de toggle y añade listeners
     document.querySelectorAll('.toggle-group').forEach(group => {
       const hiddenInput = document.getElementById(group.dataset.target);
       const buttons = group.querySelectorAll('.toggle-btn');
-      
+
       buttons.forEach(btn => {
         btn.addEventListener('click', () => {
           // Remover active de todos los hermanos
@@ -152,12 +152,12 @@ const appLogic = {
     });
   },
 
-  enviarFormulario: async function() {
+  enviarFormulario: async function () {
     // Validaciones
     const habitacion = document.getElementById('id_habitacion')?.value;
     const personal = document.getElementById('id_personal_trabajo')?.value;
     const supervisor = document.getElementById('id_supervisor')?.value;
-    
+
     if (!habitacion || !personal || !supervisor) {
       this.mostrarToast('Debe completar Habitación, Camarera y Supervisor', 'error');
       return;
@@ -200,7 +200,7 @@ const appLogic = {
   },
 
   // Lógica para Listado de Revisiones
-  initListaRevisiones: async function(forceRefresh = false) {
+  initListaRevisiones: async function (forceRefresh = false) {
     this.mostrarLoader(true);
     try {
       if (forceRefresh || this.revisionesCache.length === 0) {
@@ -209,7 +209,7 @@ const appLogic = {
           sheetsAPI.cargarPersonal('CAMARERA'),
           sheetsAPI.cargarPersonal('SUPERVISOR')
         ]);
-        
+
         this.revisionesCache = revisiones || [];
         this.camarerasCache = camareras || [];
         this.supervisoresCache = supervisores || [];
@@ -222,10 +222,10 @@ const appLogic = {
     }
   },
 
-  renderListaRevisiones: function() {
+  renderListaRevisiones: function () {
     const listContainer = document.getElementById('review-list');
     if (!listContainer) return;
-    
+
     listContainer.innerHTML = ''; // Clear
 
     this.revisionesCache.forEach((rev, index) => {
@@ -233,13 +233,13 @@ const appLogic = {
       item.className = 'review-item';
       item.style.cursor = 'pointer';
       item.onclick = () => appLogic.mostrarDetalleRevision(index);
-      
+
       let scoreClass = 'score-red';
       if (rev.PUNTUACION >= 7) scoreClass = 'score-green';
       else if (rev.PUNTUACION >= 5) scoreClass = 'score-orange';
 
-      const estadoBadge = rev.ESTADO === 'RESUELTA' 
-        ? '<span class="badge badge-resuelta">RESUELTA</span>' 
+      const estadoBadge = rev.ESTADO === 'RESUELTA'
+        ? '<span class="badge badge-resuelta">RESUELTA</span>'
         : '<span class="badge badge-abierta">ABIERTA</span>';
 
       let fechaFormateada = rev.FECHA;
@@ -274,14 +274,14 @@ const appLogic = {
     });
   },
 
-  mostrarDetalleRevision: function(index) {
+  mostrarDetalleRevision: function (index) {
     const rev = this.revisionesCache[index];
     if (!rev) return;
 
     const modal = document.getElementById('review-modal');
     const bodyContent = document.getElementById('modal-body-content');
     const footerActions = document.getElementById('modal-footer-actions');
-    
+
     let fechaFormateada = rev.FECHA;
     if (rev.FECHA) {
       const dateObj = new Date(rev.FECHA);
@@ -298,7 +298,7 @@ const appLogic = {
     let camareraNombre = rev.ID_PERSONAL_TRABAJO;
     const camareraInfo = this.camarerasCache.find(c => c.ID_PERSONAL === rev.ID_PERSONAL_TRABAJO);
     if (camareraInfo) camareraNombre = camareraInfo.NOMBRE;
-    
+
     let supervisorNombre = rev.ID_SUPERVISOR || "No asignado";
     const supInfo = this.supervisoresCache.find(s => s.ID_PERSONAL === rev.ID_SUPERVISOR);
     if (supInfo) supervisorNombre = supInfo.NOMBRE;
@@ -307,10 +307,10 @@ const appLogic = {
     if (rev.PUNTUACION >= 7) scoreColor = 'var(--success-color)';
     else if (rev.PUNTUACION >= 5) scoreColor = 'var(--warning-color)';
 
-    const badgeHTML = rev.ESTADO === 'RESUELTA' 
-        ? '<span class="badge badge-resuelta">RESUELTA</span>' 
-        : '<span class="badge badge-abierta">ABIERTA</span>';
-        
+    const badgeHTML = rev.ESTADO === 'RESUELTA'
+      ? '<span class="badge badge-resuelta">RESUELTA</span>'
+      : '<span class="badge badge-abierta">ABIERTA</span>';
+
     let fotosHTML = '';
     if (rev.FOTOS && Array.isArray(rev.FOTOS) && rev.FOTOS.length > 0) {
       const imgsHTML = rev.FOTOS.map(url => `<img src="${url}" onclick="appLogic.mostrarVisorFotos('${url}')" style="max-height:80px;"/>`).join('');
@@ -373,25 +373,25 @@ const appLogic = {
     modal.style.display = 'flex';
   },
 
-  mostrarVisorFotos: function(url) {
+  mostrarVisorFotos: function (url) {
     document.getElementById('photo-viewer-img').src = url;
     document.getElementById('photo-viewer-modal').style.display = 'flex';
   },
 
-  resolverRevision: async function(id_revision, index) {
+  resolverRevision: async function (id_revision, index) {
     if (!id_revision) {
       this.mostrarToast('Falta campo ID_REVISION desde la hoja para actualizar', 'error');
       return;
     }
-    
+
     this.mostrarLoader(true);
     try {
       await sheetsAPI.actualizarEstadoRevision(id_revision, 'RESUELTA');
       this.mostrarToast('Revisión actualizada a RESUELTA');
-      
+
       document.getElementById('review-modal').style.display = 'none';
-      if(this.revisionesCache[index]) {
-         this.revisionesCache[index].ESTADO = 'RESUELTA';
+      if (this.revisionesCache[index]) {
+        this.revisionesCache[index].ESTADO = 'RESUELTA';
       }
       this.renderListaRevisiones();
     } catch (error) {
@@ -404,11 +404,11 @@ const appLogic = {
 
 window.addEventListener('DOMContentLoaded', () => {
   appLogic.initGlobal();
-  
+
   // Enrutamiento simple basado en el elemento específico que haya en la página
   if (document.getElementById('form-nueva-revision')) {
     appLogic.initFormNuevaRevision();
-    
+
     const btnGuardar = document.getElementById('btn-guardar');
     if (btnGuardar) {
       btnGuardar.addEventListener('click', (e) => {
