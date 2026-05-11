@@ -183,18 +183,18 @@ main.container {
 }
 
 .form-group label {
-  font-size: 0.9rem;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-dark);
 }
 
 .form-control {
   width: 100%;
-  padding: 0.8rem;
+  padding: 14px 12px;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 16px;
   background-color: var(--bg-input);
   transition: border-color 0.2s;
 }
@@ -206,13 +206,20 @@ main.container {
 }
 
 .form-control:read-only {
-  background-color: #eaeaea;
-  color: var(--text-light);
+  background-color: #edf2fb;
+  color: var(--text-dark);
+  border-color: #c8d8f0;
+  cursor: default;
 }
 
 textarea.form-control {
   min-height: 100px;
   resize: vertical;
+}
+
+#form-nueva-revision .form-group + .form-group {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
 }
 
 /* Toggles / Segmented Controls */
@@ -228,8 +235,9 @@ textarea.form-control {
   flex: 1;
   text-align: center;
   padding: 0.8rem;
+  min-height: 52px;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   background-color: transparent;
   border: none;
@@ -262,7 +270,33 @@ textarea.form-control {
 
 input[type="range"] {
   width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--border-color);
   accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Botones genéricos */

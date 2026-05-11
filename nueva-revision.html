@@ -66,9 +66,17 @@
 
         <div class="form-group">
           <label for="id_habitacion">ID HABITACIÓN</label>
-          <select id="id_habitacion" class="form-control" required>
-            <option value="">-- Seleccionar --</option>
-          </select>
+          <input
+            type="text"
+            id="id_habitacion"
+            class="form-control"
+            list="habitaciones-list"
+            placeholder="Buscar habitación..."
+            autocomplete="off"
+            required
+          />
+          <datalist id="habitaciones-list"></datalist>
+          <input type="hidden" id="id_habitacion_hidden" />
         </div>
 
         <div class="form-group" style="display: flex; gap: 10px">
@@ -188,7 +196,7 @@
           type="button"
           id="btn-guardar"
           class="btn btn-primary"
-          style="margin-top: 1rem; font-size: 1.1rem; padding: 1.2rem"
+          style="margin-top: 1rem; font-size: 18px; padding: 18px; width: 100%"
         >
           GUARDAR REVISIÓN
         </button>

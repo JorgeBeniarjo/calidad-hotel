@@ -75,23 +75,33 @@ const appLogic = {
       const habitaciones = await sheetsAPI.cargarHabitaciones();
       this.habitacionesCache = habitaciones;
 
-      const selectHabitacion = document.getElementById('id_habitacion');
-      if (selectHabitacion) {
+      const inputHabitacion = document.getElementById('id_habitacion');
+      const datalistHabitacion = document.getElementById('habitaciones-list');
+      if (inputHabitacion && datalistHabitacion) {
         habitaciones.forEach(hab => {
-          selectHabitacion.add(new Option(`Hab. ${hab.ID_HABITACION} — Planta ${hab.PLANTA} — ${hab.TIPOLOGIA}`, hab.ID_HABITACION));
+          const opt = document.createElement('option');
+          opt.value = `Hab. ${hab.ID_HABITACION} — Planta ${hab.PLANTA} — ${hab.TIPOLOGIA}`;
+          datalistHabitacion.appendChild(opt);
         });
 
-        // Listener para autocompletar Planta y Tipología
-        selectHabitacion.addEventListener('change', (e) => {
-          const selected = this.habitacionesCache.find(h => h.ID_HABITACION.toString() === e.target.value);
+        const actualizarDesdeHabitacion = () => {
+          const texto = inputHabitacion.value;
+          const selected = this.habitacionesCache.find(hab =>
+            texto === `Hab. ${hab.ID_HABITACION} — Planta ${hab.PLANTA} — ${hab.TIPOLOGIA}`
+          );
           if (selected) {
             document.getElementById('planta').value = selected.PLANTA || '';
             document.getElementById('tipologia').value = selected.TIPOLOGIA || '';
+            document.getElementById('id_habitacion_hidden').value = selected.ID_HABITACION;
           } else {
             document.getElementById('planta').value = '';
             document.getElementById('tipologia').value = '';
+            document.getElementById('id_habitacion_hidden').value = '';
           }
-        });
+        };
+
+        inputHabitacion.addEventListener('input', actualizarDesdeHabitacion);
+        inputHabitacion.addEventListener('change', actualizarDesdeHabitacion);
       }
 
       const personal = await sheetsAPI.cargarPersonal('CAMARERA');
@@ -158,12 +168,16 @@ const appLogic = {
 
   enviarFormulario: async function () {
     // Validaciones
-    const habitacion = document.getElementById('id_habitacion')?.value;
+    const habitacion = document.getElementById('id_habitacion_hidden')?.value;
+    if (!habitacion) {
+      this.mostrarToast('Selecciona una habitación válida de la lista', 'error');
+      return;
+    }
     const personal = document.getElementById('id_personal_trabajo')?.value;
     const supervisor = document.getElementById('id_supervisor')?.value;
 
-    if (!habitacion || !personal || !supervisor) {
-      this.mostrarToast('Debe completar Habitación, Camarera y Supervisor', 'error');
+    if (!personal || !supervisor) {
+      this.mostrarToast('Debe completar Camarera y Supervisor', 'error');
       return;
     }
 
