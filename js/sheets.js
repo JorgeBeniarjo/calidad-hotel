@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxElIlx4uoMNK-blWGBI4rIAyh7spfeTW70sccIYC9hXdmRHakbhcC5jjV4NWIeFZw/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3yFKaXfGY-rDmRcnZTMhwi4SV7i8QZ6icpGRAdv2rJG2nPmlr_2f0YJ1cZePdu-o/exec';
 
 const sheetsAPI = {
   // Helper interno para conversiones base64
