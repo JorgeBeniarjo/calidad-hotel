@@ -96,6 +96,33 @@ const sheetsAPI = {
   },
 
   /**
+   * Actualizar campos editables de una revisión (camarera, supervisor, observaciones, acción)
+   * @param {string} id_revision
+   * @param {Object} datos Campos a actualizar
+   */
+  actualizarCamposRevision: async (id_revision, datos) => {
+    try {
+      const formData = new FormData();
+      formData.append('action', 'actualizarCampos');
+      formData.append('id_revision', id_revision);
+      formData.append('datos', JSON.stringify(datos));
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Error actualizarCamposRevision:', error);
+      throw error;
+    }
+  },
+
+  /**
    * Actualizar estado de una revisión a RESUELTA
    */
   actualizarEstadoRevision: async (id_revision, estado) => {

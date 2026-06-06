@@ -173,13 +173,8 @@ const appLogic = {
       this.mostrarToast('Selecciona una habitación válida de la lista', 'error');
       return;
     }
-    const personal = document.getElementById('id_personal_trabajo')?.value;
-    const supervisor = document.getElementById('id_supervisor')?.value;
-
-    if (!personal || !supervisor) {
-      this.mostrarToast('Debe completar Camarera y Supervisor', 'error');
-      return;
-    }
+    const personal = document.getElementById('id_personal_trabajo')?.value || '';
+    const supervisor = document.getElementById('id_supervisor')?.value || '';
 
     const habitacionSelectInfo = this.habitacionesCache.find(h => h.ID_HABITACION.toString() === habitacion.toString());
     const plantaReal = habitacionSelectInfo ? habitacionSelectInfo.PLANTA : document.getElementById('planta').value;
@@ -378,6 +373,13 @@ const appLogic = {
     btnCerrar.onclick = () => { modal.style.display = 'none'; };
     footerActions.appendChild(btnCerrar);
 
+    const btnEditar = document.createElement('button');
+    btnEditar.className = 'btn btn-secondary';
+    btnEditar.style.flex = '1';
+    btnEditar.innerText = 'Editar';
+    btnEditar.onclick = () => this.abrirEditorRevision(index);
+    footerActions.appendChild(btnEditar);
+
     if (rev.ESTADO !== 'RESUELTA') {
       const btnResolver = document.createElement('button');
       btnResolver.className = 'btn btn-primary';
@@ -389,6 +391,66 @@ const appLogic = {
     }
 
     modal.style.display = 'flex';
+  },
+
+  abrirEditorRevision: function (index) {
+    const rev = this.revisionesCache[index];
+    if (!rev) return;
+
+    this.currentEditIndex = index;
+
+    const selCamarera = document.getElementById('edit-camarera');
+    const selSupervisor = document.getElementById('edit-supervisor');
+
+    selCamarera.innerHTML = '<option value="">-- Sin asignar --</option>';
+    this.camarerasCache.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.ID_PERSONAL;
+      opt.textContent = c.NOMBRE;
+      selCamarera.appendChild(opt);
+    });
+
+    selSupervisor.innerHTML = '<option value="">-- Sin asignar --</option>';
+    this.supervisoresCache.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.ID_PERSONAL;
+      opt.textContent = s.NOMBRE;
+      selSupervisor.appendChild(opt);
+    });
+
+    selCamarera.value = rev.ID_PERSONAL_TRABAJO || '';
+    selSupervisor.value = rev.ID_SUPERVISOR || '';
+    document.getElementById('edit-observaciones').value = rev.OBSERVACIONES || '';
+    document.getElementById('edit-accion').value = rev.ACCION_TOMADA || '';
+
+    document.getElementById('edit-modal').style.display = 'flex';
+  },
+
+  guardarEdicion: async function () {
+    const index = this.currentEditIndex;
+    const rev = this.revisionesCache[index];
+    if (!rev) return;
+
+    const datos = {
+      ID_PERSONAL_TRABAJO: document.getElementById('edit-camarera').value,
+      ID_SUPERVISOR: document.getElementById('edit-supervisor').value,
+      OBSERVACIONES: document.getElementById('edit-observaciones').value,
+      ACCION_TOMADA: document.getElementById('edit-accion').value
+    };
+
+    this.mostrarLoader(true);
+    try {
+      await sheetsAPI.actualizarCamposRevision(rev.ID_REVISION, datos);
+      Object.assign(this.revisionesCache[index], datos);
+      this.mostrarToast('Revisión actualizada correctamente');
+      document.getElementById('edit-modal').style.display = 'none';
+      document.getElementById('review-modal').style.display = 'none';
+      this.renderListaRevisiones();
+    } catch (error) {
+      this.mostrarToast('Error al guardar cambios', 'error');
+    } finally {
+      this.mostrarLoader(false);
+    }
   },
 
   mostrarVisorFotos: function (url) {

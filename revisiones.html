@@ -130,6 +130,67 @@
       </a>
     </nav>
 
+    <!-- Modal Editar Revisión -->
+    <div id="edit-modal" class="modal-overlay" style="display: none">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 style="font-size: 1.2rem; margin: 0">Editar Revisión</h2>
+          <button
+            class="btn-close"
+            onclick="document.getElementById('edit-modal').style.display = 'none'"
+          >
+            ✕
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="edit-camarera">CAMARERA</label>
+            <select id="edit-camarera" class="form-control">
+              <option value="">-- Sin asignar --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-supervisor">SUPERVISOR</label>
+            <select id="edit-supervisor" class="form-control">
+              <option value="">-- Sin asignar --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="edit-observaciones">OBSERVACIONES</label>
+            <textarea
+              id="edit-observaciones"
+              class="form-control"
+              placeholder="Añadir comentarios..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="edit-accion">ACCIÓN TOMADA</label>
+            <textarea
+              id="edit-accion"
+              class="form-control"
+              placeholder="Acciones realizadas..."
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            style="flex: 1"
+            onclick="document.getElementById('edit-modal').style.display = 'none'"
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn btn-primary"
+            style="flex: 1"
+            onclick="appLogic.guardarEdicion()"
+          >
+            Guardar cambios
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script src="./js/sheets.js"></script>
     <script src="./js/app.js"></script>
   </body>
