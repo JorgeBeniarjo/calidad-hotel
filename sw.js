@@ -1,4 +1,4 @@
-const CACHE_NAME = "calidad-hotel-v3";
+const CACHE_NAME = "calidad-hotel-v4";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
