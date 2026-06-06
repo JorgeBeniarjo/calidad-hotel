@@ -123,8 +123,8 @@ const appLogic = {
       if (inputPuntuacion && displayScore) {
         const updateScoreColor = (val) => {
           displayScore.textContent = val;
-          if (val <= 4) displayScore.style.color = 'var(--danger-color)';
-          else if (val <= 6) displayScore.style.color = 'var(--warning-color)';
+          if (val <= 2) displayScore.style.color = 'var(--danger-color)';
+          else if (val <= 3) displayScore.style.color = 'var(--warning-color)';
           else displayScore.style.color = 'var(--success-color)';
         };
 
@@ -248,8 +248,8 @@ const appLogic = {
       item.onclick = () => appLogic.mostrarDetalleRevision(index);
 
       let scoreClass = 'score-red';
-      if (rev.PUNTUACION >= 7) scoreClass = 'score-green';
-      else if (rev.PUNTUACION >= 5) scoreClass = 'score-orange';
+      if (rev.PUNTUACION >= 4) scoreClass = 'score-green';
+      else if (rev.PUNTUACION >= 3) scoreClass = 'score-orange';
 
       const estadoBadge = rev.ESTADO === 'RESUELTA'
         ? '<span class="badge badge-resuelta">RESUELTA</span>'
@@ -317,8 +317,8 @@ const appLogic = {
     if (supInfo) supervisorNombre = supInfo.NOMBRE;
 
     let scoreColor = 'var(--danger-color)';
-    if (rev.PUNTUACION >= 7) scoreColor = 'var(--success-color)';
-    else if (rev.PUNTUACION >= 5) scoreColor = 'var(--warning-color)';
+    if (rev.PUNTUACION >= 4) scoreColor = 'var(--success-color)';
+    else if (rev.PUNTUACION >= 3) scoreColor = 'var(--warning-color)';
 
     const badgeHTML = rev.ESTADO === 'RESUELTA'
       ? '<span class="badge badge-resuelta">RESUELTA</span>'
