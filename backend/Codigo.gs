@@ -157,6 +157,54 @@ function actualizarEstadoRevision(idRevision, nuevoEstado) {
   }
 }
 
+function eliminarRevision(idRevision) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const hojaRev = ss.getSheetByName('REVISIONES');
+    const hojaFotos = ss.getSheetByName('FOTOS');
+
+    const valoresRev = hojaRev.getDataRange().getValues();
+    const cabRev = valoresRev[0];
+    const colIdRev = cabRev.indexOf('ID_REVISION');
+
+    let filaEncontrada = -1;
+    for (let i = 1; i < valoresRev.length; i++) {
+      if (String(valoresRev[i][colIdRev]) === String(idRevision)) {
+        filaEncontrada = i + 1;
+        break;
+      }
+    }
+    if (filaEncontrada === -1) {
+      return corsResponse({ success: false, error: 'Revisión no encontrada' });
+    }
+    hojaRev.deleteRow(filaEncontrada);
+
+    const valoresFotos = hojaFotos.getDataRange().getValues();
+    const cabFotos = valoresFotos[0];
+    const colIdRevFoto = cabFotos.indexOf('ID_REVISION');
+    const colUrl = cabFotos.indexOf('URL');
+
+    for (let i = valoresFotos.length - 1; i >= 1; i--) {
+      if (String(valoresFotos[i][colIdRevFoto]) === String(idRevision)) {
+        const url = valoresFotos[i][colUrl];
+        const match = String(url).match(/\/d\/([^/]+)/);
+        if (match) {
+          try {
+            DriveApp.getFileById(match[1]).setTrashed(true);
+          } catch (errDrive) {
+            Logger.log('No se pudo enviar a la papelera el archivo de Drive: ' + errDrive.toString());
+          }
+        }
+        hojaFotos.deleteRow(i + 1);
+      }
+    }
+
+    return corsResponse({ success: true });
+  } catch (err) {
+    return corsResponse({ success: false, error: err.toString() });
+  }
+}
+
 // ============================================================
 // ENTRY POINTS
 // ============================================================
@@ -185,6 +233,10 @@ function doPost(e) {
       const idRevision = e.parameter.id_revision;
       const datos = JSON.parse(e.parameter.datos);
       return actualizarCamposRevision(idRevision, datos);
+    }
+
+    if (action === 'eliminarRevision') {
+      return eliminarRevision(e.parameter.id_revision);
     }
 
     const datosJSON = e.parameter.datos;
