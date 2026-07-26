@@ -137,5 +137,30 @@ const sheetsAPI = {
       console.error('Error actualizarEstadoRevision:', error);
       throw error;
     }
+  },
+
+  /**
+   * Eliminar una revisión y sus fotos asociadas
+   * @param {string} id_revision
+   */
+  eliminarRevision: async (id_revision) => {
+    try {
+      const formData = new FormData();
+      formData.append('action', 'eliminarRevision');
+      formData.append('id_revision', id_revision);
+
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        redirect: 'follow',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (!result.success) throw new Error(result.error);
+      return result;
+    } catch (error) {
+      console.error('Error eliminarRevision:', error);
+      throw error;
+    }
   }
 };
