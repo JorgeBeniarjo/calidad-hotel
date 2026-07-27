@@ -57,6 +57,13 @@ const appLogic = {
     }, 3000);
   },
 
+  generarClientId: function () {
+    if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+      return window.crypto.randomUUID();
+    }
+    return 'cid-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  },
+
   // Lógica específica para la vista "Nueva Revisión"
   initFormNuevaRevision: async function () {
     this.mostrarLoader(true);
@@ -183,6 +190,8 @@ const appLogic = {
   },
 
   enviarFormulario: async function () {
+    if (this._guardandoRevision) return;
+
     // Validaciones
     const habitacion = document.getElementById('id_habitacion_hidden')?.value;
     if (!habitacion) {
@@ -196,6 +205,10 @@ const appLogic = {
     const plantaReal = habitacionSelectInfo ? habitacionSelectInfo.PLANTA : document.getElementById('planta').value;
     const tipologiaReal = habitacionSelectInfo ? habitacionSelectInfo.TIPOLOGIA : document.getElementById('tipologia').value;
 
+    if (!this._clientIdRevisionActual) {
+      this._clientIdRevisionActual = this.generarClientId();
+    }
+
     const datos = {
       FECHA: document.getElementById('fecha').value,
       DEPARTAMENTO: document.getElementById('departamento_val').value,
@@ -208,11 +221,15 @@ const appLogic = {
       OBSERVACIONES: document.getElementById('observaciones').value,
       ACCION_TOMADA: document.getElementById('accion_tomada').value,
       REQUIRIO_REPASO: document.getElementById('requirio_repaso_val').value,
-      ESTADO: document.getElementById('estado_val').value
+      ESTADO: document.getElementById('estado_val').value,
+      CLIENT_ID: this._clientIdRevisionActual
     };
 
     const fotos = cameraUtils.obtenerFotosValidas();
 
+    this._guardandoRevision = true;
+    const btnGuardar = document.getElementById('btn-guardar');
+    if (btnGuardar) btnGuardar.disabled = true;
     this.mostrarLoader(true);
     try {
       await sheetsAPI.guardarRevision(datos, fotos);
@@ -222,7 +239,9 @@ const appLogic = {
         window.location.href = './index.html';
       }, 1500);
     } catch (e) {
-      this.mostrarToast('Error guardando, se reintentará luego', 'error');
+      this.mostrarToast('Error guardando. Comprueba tu conexión y vuelve a intentarlo.', 'error');
+      this._guardandoRevision = false;
+      if (btnGuardar) btnGuardar.disabled = false;
     } finally {
       this.mostrarLoader(false);
     }
@@ -469,6 +488,8 @@ const appLogic = {
   },
 
   guardarEdicion: async function () {
+    if (this._guardandoEdicion) return;
+
     const index = this.currentEditIndex;
     const rev = this.revisionesCache[index];
     if (!rev) return;
@@ -481,6 +502,9 @@ const appLogic = {
       PUNTUACION: document.getElementById('edit-puntuacion').value
     };
 
+    this._guardandoEdicion = true;
+    const btnGuardarEdicion = document.getElementById('btn-guardar-edicion');
+    if (btnGuardarEdicion) btnGuardarEdicion.disabled = true;
     this.mostrarLoader(true);
     try {
       await sheetsAPI.actualizarCamposRevision(rev.ID_REVISION, datos);
@@ -499,6 +523,8 @@ const appLogic = {
     } catch (error) {
       this.mostrarToast('Error al guardar cambios', 'error');
     } finally {
+      this._guardandoEdicion = false;
+      if (btnGuardarEdicion) btnGuardarEdicion.disabled = false;
       this.mostrarLoader(false);
     }
   },
