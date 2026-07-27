@@ -335,6 +335,15 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid var(--border-color);
 }
 
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:active {
+  background-color: #c9302c;
+}
+
 /* Cámara y Fotos */
 .photo-uploader {
   display: flex;

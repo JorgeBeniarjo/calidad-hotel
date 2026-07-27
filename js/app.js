@@ -380,6 +380,13 @@ const appLogic = {
     btnEditar.onclick = () => this.abrirEditorRevision(index);
     footerActions.appendChild(btnEditar);
 
+    const btnBorrar = document.createElement('button');
+    btnBorrar.className = 'btn btn-danger';
+    btnBorrar.style.flex = '1';
+    btnBorrar.innerText = 'Borrar';
+    btnBorrar.onclick = () => this.borrarRevision(rev.ID_REVISION, index);
+    footerActions.appendChild(btnBorrar);
+
     if (rev.ESTADO !== 'RESUELTA') {
       const btnResolver = document.createElement('button');
       btnResolver.className = 'btn btn-primary';
@@ -476,6 +483,31 @@ const appLogic = {
       this.renderListaRevisiones();
     } catch (error) {
       this.mostrarToast('Error al actualizar', 'error');
+    } finally {
+      this.mostrarLoader(false);
+    }
+  },
+
+  borrarRevision: async function (id_revision, index) {
+    if (!id_revision) {
+      this.mostrarToast('Falta campo ID_REVISION para borrar', 'error');
+      return;
+    }
+
+    const confirmado = window.confirm(
+      '¿Seguro que quieres borrar esta revisión? También se borrarán sus fotos asociadas. Esta acción no se puede deshacer desde la app.'
+    );
+    if (!confirmado) return;
+
+    this.mostrarLoader(true);
+    try {
+      await sheetsAPI.eliminarRevision(id_revision);
+      this.mostrarToast('Revisión borrada correctamente');
+      document.getElementById('review-modal').style.display = 'none';
+      this.revisionesCache.splice(index, 1);
+      this.renderListaRevisiones();
+    } catch (error) {
+      this.mostrarToast('Error al borrar la revisión', 'error');
     } finally {
       this.mostrarLoader(false);
     }
