@@ -103,6 +103,8 @@ function getRevisiones() {
       ACCION_TOMADA: rev['ACCION_TOMADA'],
       REQUIRIO_REPASO: rev['REQUIRIO_REPASO'],
       ESTADO: rev['ESTADO'],
+      INCIDENCIA: rev['INCIDENCIA'] || 'NO',
+      PUNTUACION_ORIGINAL: rev['PUNTUACION_ORIGINAL'] || '',
       FOTOS: fotosRevision
     };
   });
@@ -120,11 +122,29 @@ function actualizarCamposRevision(idRevision, datos) {
 
     for (let i = 1; i < valores.length; i++) {
       if (String(valores[i][colId]) === String(idRevision)) {
+        const fila = i + 1;
+
+        if (datos.hasOwnProperty('PUNTUACION')) {
+          const colPuntuacion = cabeceras.indexOf('PUNTUACION');
+          const colIncidencia = cabeceras.indexOf('INCIDENCIA');
+          const colPuntuacionOriginal = cabeceras.indexOf('PUNTUACION_ORIGINAL');
+          const puntuacionActual = valores[i][colPuntuacion];
+          const nuevaPuntuacion = datos.PUNTUACION;
+          const yaHuboIncidencia = String(valores[i][colIncidencia]).toUpperCase() === 'SI' ||
+                                    String(valores[i][colIncidencia]).toUpperCase() === 'SÍ';
+
+          if (String(puntuacionActual) !== String(nuevaPuntuacion) && !yaHuboIncidencia) {
+            if (colPuntuacionOriginal !== -1) hoja.getRange(fila, colPuntuacionOriginal + 1).setValue(puntuacionActual);
+            if (colIncidencia !== -1) hoja.getRange(fila, colIncidencia + 1).setValue('SI');
+          }
+          if (colPuntuacion !== -1) hoja.getRange(fila, colPuntuacion + 1).setValue(nuevaPuntuacion);
+        }
+
         const camposEditables = ['ID_PERSONAL_TRABAJO', 'ID_SUPERVISOR', 'OBSERVACIONES', 'ACCION_TOMADA'];
         camposEditables.forEach(campo => {
           if (datos.hasOwnProperty(campo)) {
             const col = cabeceras.indexOf(campo);
-            if (col !== -1) hoja.getRange(i + 1, col + 1).setValue(datos[campo]);
+            if (col !== -1) hoja.getRange(fila, col + 1).setValue(datos[campo]);
           }
         });
         return corsResponse({ success: true });
