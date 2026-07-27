@@ -479,6 +479,7 @@ const appLogic = {
     const inputPuntuacion = document.getElementById('edit-puntuacion');
     if (inputPuntuacion) {
       inputPuntuacion.value = rev.PUNTUACION || 5;
+      this._puntuacionInicialEdicion = inputPuntuacion.value;
       if (this._actualizarColorPuntuacionEdicion) {
         this._actualizarColorPuntuacionEdicion(inputPuntuacion.value);
       }
@@ -498,9 +499,14 @@ const appLogic = {
       ID_PERSONAL_TRABAJO: document.getElementById('edit-camarera').value,
       ID_SUPERVISOR: document.getElementById('edit-supervisor').value,
       OBSERVACIONES: document.getElementById('edit-observaciones').value,
-      ACCION_TOMADA: document.getElementById('edit-accion').value,
-      PUNTUACION: document.getElementById('edit-puntuacion').value
+      ACCION_TOMADA: document.getElementById('edit-accion').value
     };
+
+    const inputPuntuacionEl = document.getElementById('edit-puntuacion');
+    const puntuacionTocada = inputPuntuacionEl && String(inputPuntuacionEl.value) !== String(this._puntuacionInicialEdicion);
+    if (puntuacionTocada) {
+      datos.PUNTUACION = inputPuntuacionEl.value;
+    }
 
     this._guardandoEdicion = true;
     const btnGuardarEdicion = document.getElementById('btn-guardar-edicion');
@@ -509,9 +515,8 @@ const appLogic = {
     try {
       await sheetsAPI.actualizarCamposRevision(rev.ID_REVISION, datos);
 
-      const puntuacionCambio = String(rev.PUNTUACION) !== String(datos.PUNTUACION);
       const yaHuboIncidencia = String(rev.INCIDENCIA).toUpperCase() === 'SI';
-      if (puntuacionCambio && !yaHuboIncidencia) {
+      if (puntuacionTocada && !yaHuboIncidencia) {
         datos.INCIDENCIA = 'SI';
         datos.PUNTUACION_ORIGINAL = rev.PUNTUACION;
       }
