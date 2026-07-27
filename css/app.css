@@ -536,6 +536,9 @@ input[type="range"]::-moz-range-thumb {
 .badge-resuelta {
   background-color: var(--success-color);
 }
+.badge-incidencia {
+  background-color: var(--warning-color);
+}
 .score-red {
   background-color: var(--danger-color);
 }

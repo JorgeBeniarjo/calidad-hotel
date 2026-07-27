@@ -166,6 +166,22 @@ const appLogic = {
     });
   },
 
+  setupEditScoreSlider: function () {
+    const input = document.getElementById('edit-puntuacion');
+    const display = document.getElementById('edit-score-display');
+    if (!input || !display) return;
+
+    const updateColor = (val) => {
+      display.textContent = val;
+      if (val <= 2) display.style.color = 'var(--danger-color)';
+      else if (val <= 3) display.style.color = 'var(--warning-color)';
+      else display.style.color = 'var(--success-color)';
+    };
+
+    input.addEventListener('input', (e) => updateColor(e.target.value));
+    this._actualizarColorPuntuacionEdicion = updateColor;
+  },
+
   enviarFormulario: async function () {
     // Validaciones
     const habitacion = document.getElementById('id_habitacion_hidden')?.value;
@@ -324,6 +340,16 @@ const appLogic = {
       ? '<span class="badge badge-resuelta">RESUELTA</span>'
       : '<span class="badge badge-abierta">ABIERTA</span>';
 
+    let incidenciaHTML = '';
+    if (rev.INCIDENCIA === 'SI') {
+      incidenciaHTML = `
+        <div class="detail-item detail-full">
+          <span class="badge badge-incidencia">⚠ Hubo incidencia</span>
+          <span class="detail-value">Puntuación original: ${rev.PUNTUACION_ORIGINAL}</span>
+        </div>
+      `;
+    }
+
     let fotosHTML = '';
     if (rev.FOTOS && Array.isArray(rev.FOTOS) && rev.FOTOS.length > 0) {
       const imgsHTML = rev.FOTOS.map(url => `<img src="${url}" onclick="appLogic.mostrarVisorFotos('${url}')" style="max-height:80px;"/>`).join('');
@@ -349,7 +375,8 @@ const appLogic = {
           <span class="detail-label">Camarera / Supervisor</span>
           <span class="detail-value">${camareraNombre} / ${supervisorNombre}</span>
         </div>
-        
+        ${incidenciaHTML}
+
         <div class="detail-item detail-full">
           <span class="detail-label">Observaciones</span>
           <span class="detail-value">${rev.OBSERVACIONES || 'Sin observaciones'}</span>
@@ -430,6 +457,14 @@ const appLogic = {
     document.getElementById('edit-observaciones').value = rev.OBSERVACIONES || '';
     document.getElementById('edit-accion').value = rev.ACCION_TOMADA || '';
 
+    const inputPuntuacion = document.getElementById('edit-puntuacion');
+    if (inputPuntuacion) {
+      inputPuntuacion.value = rev.PUNTUACION || 5;
+      if (this._actualizarColorPuntuacionEdicion) {
+        this._actualizarColorPuntuacionEdicion(inputPuntuacion.value);
+      }
+    }
+
     document.getElementById('edit-modal').style.display = 'flex';
   },
 
@@ -442,12 +477,20 @@ const appLogic = {
       ID_PERSONAL_TRABAJO: document.getElementById('edit-camarera').value,
       ID_SUPERVISOR: document.getElementById('edit-supervisor').value,
       OBSERVACIONES: document.getElementById('edit-observaciones').value,
-      ACCION_TOMADA: document.getElementById('edit-accion').value
+      ACCION_TOMADA: document.getElementById('edit-accion').value,
+      PUNTUACION: document.getElementById('edit-puntuacion').value
     };
 
     this.mostrarLoader(true);
     try {
       await sheetsAPI.actualizarCamposRevision(rev.ID_REVISION, datos);
+
+      const puntuacionCambio = String(rev.PUNTUACION) !== String(datos.PUNTUACION);
+      const yaHuboIncidencia = String(rev.INCIDENCIA).toUpperCase() === 'SI';
+      if (puntuacionCambio && !yaHuboIncidencia) {
+        datos.INCIDENCIA = 'SI';
+        datos.PUNTUACION_ORIGINAL = rev.PUNTUACION;
+      }
       Object.assign(this.revisionesCache[index], datos);
       this.mostrarToast('Revisión actualizada correctamente');
       document.getElementById('edit-modal').style.display = 'none';
@@ -530,5 +573,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   } else if (document.getElementById('review-list')) {
     appLogic.initListaRevisiones();
+    appLogic.setupEditScoreSlider();
   }
 });
