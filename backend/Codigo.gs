@@ -265,12 +265,32 @@ function doPost(e) {
     }
     const datos = JSON.parse(datosJSON);
 
-    const idRevision = Utilities.getUuid();
-    const timestamp = new Date();
-
     const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
     const hojaRevisiones = ss.getSheetByName('REVISIONES');
     const hojaFotos = ss.getSheetByName('FOTOS');
+
+    const clientId = datos.CLIENT_ID || '';
+    if (clientId) {
+      const valoresExistentes = hojaRevisiones.getDataRange().getValues();
+      const cabecerasExistentes = valoresExistentes[0];
+      const colClientId = cabecerasExistentes.indexOf('CLIENT_ID');
+      const colIdRevisionExistente = cabecerasExistentes.indexOf('ID_REVISION');
+      if (colClientId !== -1) {
+        for (let i = 1; i < valoresExistentes.length; i++) {
+          if (String(valoresExistentes[i][colClientId]) === String(clientId)) {
+            return corsResponse({
+              success: true,
+              id: valoresExistentes[i][colIdRevisionExistente],
+              fotos_subidas: 0,
+              duplicado_evitado: true
+            });
+          }
+        }
+      }
+    }
+
+    const idRevision = Utilities.getUuid();
+    const timestamp = new Date();
 
     hojaRevisiones.appendRow([
       idRevision,
@@ -286,7 +306,10 @@ function doPost(e) {
       datos.OBSERVACIONES || '',
       datos.ACCION_TOMADA || '',
       datos.REQUIRIO_REPASO || 'No',
-      datos.ESTADO || 'ABIERTA'
+      datos.ESTADO || 'ABIERTA',
+      'NO',
+      '',
+      clientId
     ]);
 
     const carpeta = DriveApp.getFolderById(DRIVE_FOLDER_ID);
